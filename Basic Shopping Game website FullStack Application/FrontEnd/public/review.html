@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>review</title>
+</head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+    integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+<link href="game.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+</script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Sp Games</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link active" href="homepage.html">Home <span
+                            class="sr-only">(current)</span></a>
+
+                    <a class="nav-item nav-link" href="#">About</a>
+                    <a class="nav-item nav-link" href="profile.html">Profile</a>
+                    <a class="nav-item nav-link" href="review.html">Reviews</a>
+                    <input type="button" id="Logout" value="Log Out" />
+                </div>
+            </div>
+        </nav>
+
+        <script>
+            const baseUrl = "http://localhost:8081";
+            var id = window.location.search.substring(1);
+
+            axios.get(`${baseUrl}/game/${id}`)
+                .then((response) => {
+                    const posts = response.data;
+                    posts.forEach((post) => {
+                        const postHtml = `
+           <div class="card" style="margin-top: 2rem;">
+               <div class="card-body">
+                   <p class="card-text">${post.title}<span class="float-right" >$${post.price}</span></p>
+               </div>
+                <div>
+               <img src = "${post.pic}" width = 480>
+               
+                 </div>
+                 
+         
+               <div class="card-footer text-muted">
+                   ${post.created_at}
+              
+           `;
+
+                        $("#posts").append(postHtml);
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+
+                
+
+            $("#review").submit((event) => {
+                // prevents the page from refreshing
+                event.preventDefault();
+
+                const requestBody = {
+                    review: $("#review-body").val(),
+                    fk_poster_id: loggedInUserID
+                };
+
+                // create the post
+                axios.post(`${baseUrl}/user/:uid/game/:gid/review/`, requestBody)
+                    .then((response) => {
+                        // reset form value.
+                        $("#review-body").val("");
+
+                        // fetch the post with the returned postID
+                        axios.get(`${baseUrl}/review/${response.data.insertId}`)
+                            .then((response) => {
+                                const post = response.data;
+                                console.log(post);
+                                const postHtml = `
+                        <div class="card" style="margin-top: 2rem;">
+                            <div class="card-body">
+                                <p class="card-text">${post.content}</p>
+                            </div>
+                            <div class="card-footer text-muted">
+                                ${post.created_at}
+                            </div>
+                        </div>
+                        `;
+                                $("#posts").prepend(postHtml);
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    });
+            });
+
+
+            $("#Logout").click(function () {
+                window.localStorage.clear();
+                window.location.assign("http://localhost:3001/login.html");
+            })
+        </script>
+        <section>
+            <div id="posts">
+
+            </div>
+            <div class="col-md-8 col-xs-12">
+
+                <h1>Home</h1>
+
+                <form id="review" style="margin-top: 2rem;">
+                    <div class="form-group">
+                        <textarea class="form-control" id="review-body" rows="1"placeholder="Enter a review"></textarea>
+                        <textarea class="form-control" id="review" rows="1" placeholder="Enter rating"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-primary">Reset</button>
+                </form>
+
+                <div id="posts">
+
+                </div>
+            </div>
+
+        </section>
+</body>
+
+</html>

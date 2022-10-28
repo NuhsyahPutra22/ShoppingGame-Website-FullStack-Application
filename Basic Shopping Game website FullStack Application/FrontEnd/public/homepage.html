@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <title>Games</title>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+   <link href="game.css" rel="stylesheet" />
+   <script
+   src="https://code.jquery.com/jquery-3.3.1.min.js"
+   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+   crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+
+
+<body>
+   <header>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+         <a class="navbar-brand" href="#">Sp Games</a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+               <a class="nav-item nav-link active" href="homepage.html">Home <span class="sr-only">(current)</span></a>
+
+               <a class="nav-item nav-link" href="#">About</a>
+               <a class="nav-item nav-link" href="profile.html">Profile</a>
+               <a class="nav-item nav-link" href="review.html">Reviews</a>
+               <input type="button" id="Logout" value="Log Out" />
+            </div>
+         </div>
+      </nav>
+   </header>
+
+   <section class="container">
+      <div class="row mt-3">
+         
+         <div class="col">
+            <div class="input-group">
+               <label for="searchname" class="  input-group-prepend">Search By Name</label>
+               <div class="col">
+                  <input type="search" class="form-control" id="searchname" placeholder="Search By Name">
+               </div>
+            </div>
+         </div>
+         <div class="col">
+            <div class="input-group">
+               <label for="searchfee" class="input-group-prepend">Search By Fee</label>
+               <div class="col">
+                  <input type="search" class="form-control" id="searchfee" placeholder="Search By fee">
+               </div>
+            </div>
+         </div>
+         <button type="button" id="searchbutton" class="btn btn-primary">Search</button>
+      </div>
+      <div id="results">
+
+      </div>
+   </section>
+   <section id="posts">
+
+   </section>
+   <script>
+    // your JS code goes here.
+    // API url
+    const baseUrl = "http://localhost:8081";
+      // hardcoded because we have not added login yet.
+     
+   axios.get(`${baseUrl}/game/`) 
+   .then((response) => {
+       const posts = response.data;
+       posts.forEach((post) => {
+           const postHtml = `
+           <div class="card" style="margin-top: 2rem;">
+               <div class="card-body">
+                   <p class="card-text">${post.title}<span class="float-right" >$${post.price}</span></p>
+               </div>
+                <div>
+               <img src = "${post.pic}" width = 480><span class = "text-right">${post.description}<a href="review.html?${post.gameid}" class="w3-button w3-black">Reviews</a></span>
+                 </div>
+                 
+         
+               <div class="card-footer text-muted">
+                   ${post.created_at}
+              
+           `;
+           
+           $("#posts").append(postHtml);
+       });
+   })
+   .catch((error) => {
+       console.log(error);
+   });
+   var search_refresh = 0;
+   $(document).ready(function(){
+            $("#searchbutton").click(function () {
+               //  reload the page to remove old results
+                var i = 0;
+                search_refresh++;
+                console.log(search_refresh)
+                if(search_refresh >= 1){
+                    $("#posts").html("")
+                    i += 1;
+                }
+                // API url
+                const baseUrl = "http://localhost:8081";
+                // hardcoded because we have not added login yet.
+                var name = $('#searchname').val();
+                var price = $('#searchfee').val();
+                console.log(name);
+                if (name == '') {
+                    axios.get(`${baseUrl}/games/${price}/price`)
+                        .then((response) => {
+                            const posts = response.data;
+                            posts.forEach((post) => {
+                                const postHtml = `
+                    <div class="innerpart">
+                        <div>
+                            <p>${post.title}</p>
+                            <p>${post.description}</p>
+                            <p>${post.year}</p>
+                            <p>${post.price}</p>
+                            <p>${post.platform}</p>
+                            <p>${post.catname}</p>
+                            <p>${post.pic}</p>
+                        </div>
+                        <div>
+                            ${post.created_at}
+                        </div>
+                    </div>
+                    `;
+
+                                $("#posts").append(postHtml);
+                            });
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                } else {
+                    axios.get(`${baseUrl}/games/${name}/name`)
+                        .then((response) => {
+                            const posts = response.data;
+                            posts.forEach((post) => {
+                                const postHtml = `
+                    <div class="innerpart">
+                        <div>
+                            <p>${post.title}</p>
+                            <p>${post.description}</p>
+                            <p>${post.year}</p>
+                            <p>${post.price}</p>
+                            <p>${post.platform}</p>
+                            <p>${post.catname}</p>
+                            <p>${post.pic}</p>
+                        </div>
+                        <div>
+                            ${post.created_at}
+                        </div>
+                    </div>
+                    `;
+
+                                $("#posts").append(postHtml);
+                            });
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                }
+            });
+        });$(document).ready(function () {
+        $("#Logout").click(function () {
+        window.localStorage.clear();
+        window.location.assign("http://localhost:3001/login.html");
+      });
+    });
+    if(window.localStorage.getItem("userInfo")==undefined){
+     alert("Please Sign in");
+     window.location.assign("http://localhost:3001/login.html");  
+    }
+    
+    
+    
+    </script>
+   
+  
+      </script>
+
+
+
+</body>
+
+</html>

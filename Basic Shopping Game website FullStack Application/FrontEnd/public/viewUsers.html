@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SP Games</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+        <div class="col-lg-6 col-12 order-md-3 order-lg-2 d-flex justify-content-center">
+            <nav class="main-menu menu-style-2">
+                <ul>
+                    <li><a href="Home.html">Home</a>
+                    </li>
+                    <li><a href="game.html">Games</a></li>
+                    <li><a href="addReview.html">addReview</a></li>
+                    <li><a href="addgame.html">addgame</a></li>
+                    <li><a href="addCategory.html">addCategory</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="viewIndivUser.html">viewIndivgame</a></li>
+                    <li><a href="viewUsers.html">viewgame</a></li>
+                    <li id="adminpage"> </li>
+                    <input type="button" id="Logout" value="Log Out" />
+                </ul>
+            </nav>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <h1>Game</h1>
+
+            <form id="create-post-form" style="margin-top: 2rem;">
+                <div class="form-group">
+                    <textarea class="form-control" id="gameid" rows="3" placeholder="Search what?"></textarea>
+                   
+                </div>
+                <button type="submit" class="btn btn-primary" id="Search">Search User by ID</button>
+            </form>
+
+            <div id="posts">
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-body">
+                        <p class="card-text">title</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        description 
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        $("#posts").empty();//empty the div
+        $.ajax({
+            url: "http://localhost:8081/game",
+            type: "GET",
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data, textStatus, xhr) {
+                console.log(data);
+                console.log(textStatus);
+                if (data != null) {
+                    var postHtml = "";
+
+                    for (var i = 0; i < data.length; i++) {
+                        // Display records top down
+                        postHtml += `
+                        <div class="card" style="background-color:Beige; height: 15rem; float: top; margin-top: 1rem; margin-left: 1rem">
+                        <div class="card-body" style="height: 10rem; max-height: 100px; overflow-y: scroll;">
+                            <p class="card-text">${data[i].title}</p>
+                        </div>
+                        <div class="card-footer text-muted" style="height: 10rem">
+                            ${data[i].description}
+                        </div>
+                        
+                        <div class="card-footer text-muted">
+                            <a href="viewIndivUser.html?Gameid=${data[i].gameid}&title=${data[i].title}&description=${data[i].description}&price=${data[i].price}&platform=${data[i].platform}&fk_categoryid=${data[i].fk_categoryid}&year=${data[i].year}&reviewid=${data[i].reviewid}&content=${data[i].content}&rating=${data[i].rating}" class="btn btn-primary" class="View">Details</a>
+                        </div>
+                        </div>
+                        `;
+                        // Display records side-by-side
+                        // postHtml += `
+                        // <div class="card" style="background-color:Beige; height: 15rem; width: 15rem; float: left; margin-top: 1rem; margin-left: 1rem">
+                        // <div class="card-body" style="height: 10rem; max-height: 100px; overflow-y: scroll;">
+                        //     <p class="card-text">${data[i].username}</p>
+                        // </div>
+                        // <div class="card-footer text-muted" style="height: 10rem">
+                        //     ${data[i].email}
+                        // </div>
+                        
+                        // <div class="card-footer text-muted">
+                        //     <a href="viewIndivUser.html?userid=${data[i].userid}&username=${data[i].username}&email=${data[i].email}&role=${data[i].role}&pic=${data[i].pic}" class="btn btn-primary" class="View">Details</a>
+                        // </div>
+                        // </div>
+                        // `;
+                    }
+                    $("#posts").append(postHtml);
+                } else {
+                    console.log("Issue in retrieving...");
+                }
+            },
+            error: function (xhr, textStatus, err) {
+                console.log(err);
+            }
+        });
+
+        $(document).ready(function () {
+            $("#Search").click(function () {
+                var gameid  = $("#gameid ").val();
+                var title=$('#title').val();
+                console.log(uid);
+                $("#posts").empty();
+                //var tmpToken = localStorage.getItem("token");
+                $.ajax({
+                    //headers: { 'authorization': 'Bearer ' + tmpToken },
+                    url: "http://localhost:8081/game/" + gameid +title,
+                    type: "GET",
+                    //data: data,
+                    contentType: "application/json",
+                    dataType: "json",
+                    success: function (data, textStatus, xhr) {
+                        console.log(data);
+
+                        if (data != null) {
+                            var postHtml = "";
+                            for (var i = 0; i < data.length; i++) {
+                                postHtml += `
+                                <div class="card" style="background-color:Beige; margin-top: 2rem;">
+                                <div class="card-body">
+                                    <p class="card-text">${data[i].title}</p>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    ${data[i].description}
+                                </div>
+                                <div class="card-footer text-muted">
+                                   
+                                    <a href="viewUsers.html" class="btn btn-primary" class="ViewAll">View All</a>
+                                </div>  
+                                </div>                
+                                `;
+                            }
+
+                            $("#posts").append(postHtml);
+                        } else {
+                            console.log("Error!");
+                        }
+
+
+                    },
+                    error: function (xhr, textStatus, err) {
+                        console.log(err);
+                        window.alert(err);
+                    }
+                });
+                return false;
+            });
+        });
+
+    </script>
+</body>
+
+</html>

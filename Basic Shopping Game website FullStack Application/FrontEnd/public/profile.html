@@ -1,0 +1,174 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>SP Games</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- All css files are included here. -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/qanto.css">
+    <link rel="stylesheet" href="assets/css/bauhaus93.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/icofont.min.css">
+    <link rel="stylesheet" href="assets/css/plugins.css">
+    <link rel="stylesheet" href="assets/css/helper.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+    integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Modernizr JS -->
+    <script src="assets/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+<body>
+    <div id="main-wrapper">
+
+        <!--Header section start-->
+        <header class="header header-static bg-black header-sticky">
+            <div class="default-header menu-right">
+                <div class="container container-1520">
+                    <div class="row">
+
+                        <!--Logo start-->
+                        <div class="col-12 col-md-3 col-lg-3 order-md-1 order-lg-1 mt-20 mb-20">
+                            <div class="logo">
+                                <a href="#"><img src="assets/images/splogo.png" alt=""></a>
+                            </div>
+                        </div>
+                        <!--Logo end-->
+
+                        <!--Menu start-->
+                        <div class="col-lg-6 col-12 order-md-3 order-lg-2 d-flex justify-content-center">
+                            <nav class="main-menu menu-style-2">
+                                <ul>
+                                    <li><a href="Home.html">Home</a>
+                                    </li>
+                                    <li><a href="game.html">Games</a></li>
+                                    <li><a href="addReview.html">addReview</a></li>
+                                    <li><a href="addgame.html">addgame</a></li>
+                                    <li><a href="addCategory.html">addCategory</a></li>
+                                    <li><a href="profile.html">Profile</a></li>
+                                    <li><a href="viewIndivUser.html">viewIndivgame</a></li>
+                                    <li><a href="viewUsers.html">viewgame</a></li>
+                                    <input type="button" id="Logout" value="Log Out" />
+                                    <input type="button" id="Update" value="Update" />
+                                    </ul>
+                            </nav>
+                        </div>
+                        <!--Menu end-->
+
+                        <!--Header Right Wrap-->
+
+
+                        <!--Mobile Menu start-->
+                        <div class="row">
+                            <div class="col-12 d-flex d-lg-none">
+                                <div class="mobile-menu"></div>
+                            </div>
+                        </div>
+                        <!--Mobile Menu end-->
+
+                    </div>
+                </div>
+        </header>
+        <!--Header section end-->
+
+        <!--slider section start-->
+        <div class="hero-section section position-relative">
+            <div class="hero-slider">
+                <!--Hero Item start-->
+                <div class="hero-item hero-item-2" style="background-image: url(assets/images/hero/Gaming1.jpeg)">
+                    <div class="container container-1520">
+                        <div class="row">
+                            <div class="col-12">
+
+                                <!--Hero Content start-->
+                                <div class="hero-content">
+                                    <h1>The SP Games</h1>
+                                </div>
+                                <!--Hero Content end-->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Hero Item end-->
+        <div class="card">
+            <img src="http://localhost:3001/image/pic.jpg" id="profile_pic_url" alt="Profile" style="width:100%">
+            <p class="username"> <label>Username: </label>
+                <input type="text" id="username"> </br>
+            </p>
+            <p class="type"><label>Job role: </label>
+                <input type="text" id="type"> </br>
+            </p>
+            <p class="email"><label>Email: </label>
+                <input type="text" id="email">
+            </p>
+            <p><span id="msg"></span></p>
+            <a href="#"><i class="fa fa-dribbble"></i></a>
+            <a href="#"><i class="fa fa-twitter"></i></a>
+            <a href="#"><i class="fa fa-linkedin"></i></a>
+            <a href="#"><i class="fa fa-facebook"></i></a>
+            <p><input type="button" id="Update" value="Update Profile" /></p>
+            <p><input type="button" id="Logout" value="Log Out" /></p>
+        </div>
+        <script>
+            $(document).ready(function () {
+        
+              $("#Update").click(function () {
+                var tmpUName = $('#username').val();
+                var tmpEmail = $('#email').val();
+                var tmpRole = $('#type').val();
+                var tmpToken = localStorage.getItem('token');
+                // var data = "{\"username\":\""+tmpUName+"\", \"email\":\""+tmpEmail+"\", \"role\":\""+tmpRole+"\", \"password\":\""+tmpPwd+"\"}";
+                var data = "{\"username\":\"" + tmpUName + "\", \"email\":\"" + tmpEmail + "\", \"type\":\"" + tmpRole +
+                  "\"}";
+                $.ajax({
+                  headers: {
+                    'authorization': 'Bearer ' + tmpToken
+                  },
+                  url: 'http://localhost:8081/user/update',
+                  type: 'PUT',
+                  data: data,
+                  contentType: "application/json; charset=utf-8",
+                  dataType: 'json',
+                  success: function (data, textStatus, xhr) {
+                    if (data != null && data.success) {
+        
+                      $('#msg').html('Record updated successfully!');
+        
+                    } else {
+                      console.log("Error");
+                    }
+                  },
+                  error: function (xhr, textStatus, errorThrown) {
+                    console.log('Error in Operation');
+                  }
+                });
+              });
+        
+              $("#Logout").click(function () {
+                window.localStorage.clear();
+                window.location.assign("http://localhost:3001/index.html");
+              });
+            });
+          </script>
+          <script>
+            var userData = localStorage.getItem('userInfo');
+            var userJsonData = JSON.parse(userData);
+            var username = userJsonData[0].username;
+            var email = userJsonData[0].email;
+            var type = userJsonData[0].type;
+            var profile_pic_url = userJsonData[0].profile_pic_url;
+            document.getElementById("username").value = username;
+            document.getElementById("email").value = email;
+            document.getElementById("type").value = type;
+            document.getElementById("profile_pic_url").src = "http://localhost:3001/image/" + userpic;
+          </script>
+</body>
+
+</html>
